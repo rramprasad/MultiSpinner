@@ -141,6 +141,7 @@ public class SpinnerFragment extends Fragment {
                     popupMessage.showAsDropDown(teamsSearchView);
                 }
 
+                //teamsAdapter.getFilter().filter("");
                 teamsAdapter.getFilter().filter(newText);
 
                 /*teamsAdapter.getFilter().filter(newText, new Filter.FilterListener() {

@@ -67,7 +67,8 @@ public class TeamsAdapter extends BaseAdapter implements Filterable{
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.teamNameTextView.setText(teamsArrayList.get(position).getTeamName());
+        //viewHolder.teamNameTextView.setText(teamsArrayList.get(position).getTeamName());
+        viewHolder.teamNameTextView.setText(getItem(position).getTeamName());
         return convertView;
     }
 
@@ -113,6 +114,7 @@ public class TeamsAdapter extends BaseAdapter implements Filterable{
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+
             filteredData = (ArrayList<Team>) filterResults.values;
             notifyDataSetChanged();
         }
