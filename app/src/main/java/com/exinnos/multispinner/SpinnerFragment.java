@@ -8,9 +8,14 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
 /**
@@ -32,6 +37,7 @@ public class SpinnerFragment extends Fragment {
     private View rootView;
     private SearchView teamsSearchView;
     private PopupWindow popupMessage;
+    private ArrayAdapter<String> adapter;
 
     public SpinnerFragment() {
         // Required empty public constructor
@@ -72,8 +78,29 @@ public class SpinnerFragment extends Fragment {
         TextView textView = new TextView(getActivity());
         textView.setText("Testing");
 
-        popupMessage = new PopupWindow(rootView, ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupMessage.setContentView(textView);
+        View popup_layout = inflater.inflate(R.layout.popup_layout,container,false);
+        ListView teamsListView = (ListView) popup_layout.findViewById(R.id.teams_list_view);
+
+        ArrayList<Team> teamsArrayList = new ArrayList<Team>();
+        teamsArrayList.add(new Team(1,"Sharks"));
+        teamsArrayList.add(new Team(2,"Android"));
+        teamsArrayList.add(new Team(3,"Google"));
+        teamsArrayList.add(new Team(4,"Yahoo"));
+        teamsArrayList.add(new Team(5,"Facebook"));
+        teamsArrayList.add(new Team(6,"Twitter"));
+        teamsArrayList.add(new Team(7,"Apple"));
+        teamsArrayList.add(new Team(8,"Amazon"));
+        teamsArrayList.add(new Team(9,"Udacity"));
+        teamsArrayList.add(new Team(10,"Bosch"));
+
+        //adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line,sortList);
+
+        final TeamsAdapter teamsAdapter = new TeamsAdapter(getActivity(), teamsArrayList);
+
+        teamsListView.setAdapter(teamsAdapter);
+
+        popupMessage = new PopupWindow(popup_layout, ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        //popupMessage.setContentView(textView);
 
         teamsSearchView = (SearchView) rootView.findViewById(R.id.teams_search_view);
         teamsSearchView.setQueryHint("Select Team/s");
@@ -83,8 +110,7 @@ public class SpinnerFragment extends Fragment {
             public void onFocusChange(View view, boolean hasFocus) {
                 Toast.makeText(getActivity(), String.valueOf(hasFocus),
                         Toast.LENGTH_SHORT).show();
-                popupMessage.dismiss();
-                popupMessage.showAsDropDown(teamsSearchView);
+
             }
         });
 
@@ -95,7 +121,7 @@ public class SpinnerFragment extends Fragment {
                 Toast.makeText(getActivity(), query,
                         Toast.LENGTH_SHORT).show();
 
-                return false;
+                return true;
             }
 
             @Override
@@ -104,14 +130,28 @@ public class SpinnerFragment extends Fragment {
                 Toast.makeText(getActivity(), "newText=>"+newText,
                         Toast.LENGTH_SHORT).show();
 
-                return false;
+
+                if(newText.isEmpty()){
+                    popupMessage.dismiss();
+                    return false;
+                }
+
+                //popupMessage.dismiss();
+                if(!popupMessage.isShowing()){
+                    popupMessage.showAsDropDown(teamsSearchView);
+                }
+
+                teamsAdapter.getFilter().filter(newText);
+
+                /*teamsAdapter.getFilter().filter(newText, new Filter.FilterListener() {
+                    @Override
+                    public void onFilterComplete(int i) {
+                        teamsAdapter.notifyDataSetChanged();
+                    }
+                });*/
+                return true;
             }
         });
-
-
-
-
-
         return rootView;
     }
 
